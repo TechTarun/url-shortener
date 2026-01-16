@@ -2,6 +2,7 @@ package idgen
 
 import (
 	"errors"
+	"sync"
 	"time"
 )
 
@@ -24,6 +25,7 @@ type Snowflake struct {
 	lastTS   int64
 	nodeId   int64
 	sequence int64
+	mu       sync.Mutex
 }
 
 func NewSnowflakeGenerator(length int, nodeId int64) (*Snowflake, error) {
@@ -38,7 +40,12 @@ func NewSnowflakeGenerator(length int, nodeId int64) (*Snowflake, error) {
 	return &Snowflake{length: length, nodeId: nodeId}, nil
 }
 
+// This method will generate short codes without conflict since every API call is sequential.
+// Pros: Unique short code everytime, thread safe
+// Cons: Short code length will vary starting from single digit to an endless number of digits
 func (s *Snowflake) GenerateShortCode(longUrl string) (string, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	now := time.Now().UnixMilli() - customEpoch
 
 	if now == s.lastTS {
