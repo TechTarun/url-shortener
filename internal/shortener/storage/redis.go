@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"os"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -13,7 +14,11 @@ type RedisStore struct {
 	ttl    time.Duration
 }
 
-func NewRedisStore(addr string, ttl time.Duration) *RedisStore {
+func NewRedisStore(ttl time.Duration) *RedisStore {
+	addr := os.Getenv("REDIS_ADDR")
+	if addr == "" {
+		addr = "localhost:6379"
+	}
 	rdb := redis.NewClient(&redis.Options{Addr: addr})
 	return &RedisStore{
 		client: rdb,
