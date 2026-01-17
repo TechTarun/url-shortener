@@ -9,8 +9,9 @@ import (
 )
 
 func main() {
-	repo := storage.NewInMemoryStore()
-	generator := idgen.NewBase62Generator()
+	// repo := storage.NewInMemoryStore()
+	repo := storage.NewRedisStore("localhost:6379", 0)
+	generator, _ := idgen.NewSnowflakeGenerator(8, 1)
 	service := shortener.NewService(repo, generator)
 	handler := shortener.NewHandler(service)
 
