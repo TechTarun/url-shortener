@@ -17,6 +17,7 @@ func main() {
 
 	http.HandleFunc("/shorten", handler.Shorten)
 	http.HandleFunc("/test", handler.Test)
+	http.HandleFunc("/", handler.Resolve)
 
 	log.Println("Server running on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
