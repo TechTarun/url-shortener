@@ -2,7 +2,6 @@ package shortener
 
 import (
 	"errors"
-	"log"
 	"os"
 	"strconv"
 	"url-shortener/pkg/idgen"

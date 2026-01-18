@@ -12,7 +12,7 @@ services:
     build:
       context: ../../
       dockerfile: deployments/production/Dockerfile
-    image: tarun2799/mini-me:${IMAGE_TAG}
+    image: tarun2799/mini-me:${IMAGE_TAG:-latest}
     container_name: mini-me-prod
     restart: always
     ports:

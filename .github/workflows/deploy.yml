@@ -31,14 +31,15 @@ jobs:
       # 4️⃣ Build & push multi-arch image
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: deployments/production/Dockerfile
-          platforms: linux/amd64
-          push: true
-          tags: |
-            ${{ env.IMAGE_NAME }}:latest
-            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+        run: |
+          IMAGE_TAG=${GITHUB_SHA}
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -t tarun2799/mini-me:${IMAGE_TAG} \
+            -t tarun2799/mini-me:latest \
+            -f deployments/production/Dockerfile \
+            . \
+            --push
 
       # 5️⃣ Deploy on EC2 via SSH
       - name: Deploy on EC2
