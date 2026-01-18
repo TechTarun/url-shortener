@@ -45,5 +45,5 @@ func (h *Handler) Resolve(res http.ResponseWriter, req *http.Request) {
 }
 
 func (h *Handler) Test(res http.ResponseWriter, req *http.Request) {
-	json.NewEncoder(res).Encode(map[string]string{"success": "true"})
+	json.NewEncoder(res).Encode(map[string]string{"message": "this is test endpoint"})
 }
