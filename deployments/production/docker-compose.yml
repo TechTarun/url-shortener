@@ -9,13 +9,19 @@ services:
       - redis-data:/data
 
   app:
-    image: tarun2799/mini-me:v0.0.1
+    build:
+      context: ../../
+      dockerfile: deployments/production/Dockerfile
+    image: tarun2799/mini-me:${IMAGE_TAG}
     container_name: mini-me-prod
     restart: always
     ports:
       - "8080:8080"
     environment:
       REDIS_ADDR: redis:6379
+      REDIS_TTL: 0
+      SHORT_CODE_LENGTH: 8
+      NODE_ID: 1
     depends_on:
       - redis
 
