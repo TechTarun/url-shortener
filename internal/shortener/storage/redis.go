@@ -32,9 +32,9 @@ func (r *RedisStore) Save(shortCode string, longUrl string) error {
 }
 
 func (r *RedisStore) Get(shortCode string) (string, error) {
-	value, error := r.client.Get(r.ctx, shortCode).Result()
-	if error != nil {
-		return "", error
+	value, err := r.client.Get(r.ctx, shortCode).Result()
+	if err != nil && err != redis.Nil {
+		return "", err
 	}
 	return value, nil
 }

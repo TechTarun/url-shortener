@@ -16,14 +16,18 @@ func NewHandler(service *Service) *Handler {
 
 func (h *Handler) Shorten(res http.ResponseWriter, req *http.Request) {
 	var reqBody struct {
-		URL string `json:"url"`
+		URL             string `json:"url"`
+		CustomShortCode string `json:"short_code"`
 	}
 
-	json.NewDecoder(req.Body).Decode(&reqBody)
+	if err := json.NewDecoder(req.Body).Decode(&reqBody); err != nil {
+		http.Error(res, "Invalid request body", http.StatusBadRequest)
+		return
+	}
 
-	shortCode, error := h.service.Shorten(reqBody.URL)
-	if error != nil {
-		http.Error(res, error.Error(), http.StatusBadRequest)
+	shortCode, err := h.service.Shorten(reqBody.URL, reqBody.CustomShortCode)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -34,11 +38,18 @@ func (h *Handler) Resolve(res http.ResponseWriter, req *http.Request) {
 	shortCode := strings.TrimPrefix(req.URL.Path, "/")
 	if shortCode == "" {
 		http.NotFound(res, req)
+		return
 	}
 
-	longUrl, error := h.service.Resolve(shortCode)
-	if error != nil {
-		http.Error(res, error.Error(), http.StatusBadRequest)
+	longUrl, err := h.service.Resolve(shortCode)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if longUrl == "" {
+		http.NotFound(res, req)
+		return
 	}
 
 	http.Redirect(res, req, longUrl, http.StatusFound)
