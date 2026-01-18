@@ -49,5 +49,6 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd deployments/production
+            echo "IMAGE_TAG=${{ github.sha }}" > .env
             docker compose pull
             docker compose up -d
