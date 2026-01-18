@@ -9,7 +9,7 @@ services:
       - redis-data:/data
 
   app:
-    image: tarun2799/mini-me:latest
+    image: tarun2799/mini-me:v0.0.1
     container_name: mini-me-prod
     restart: always
     ports:
